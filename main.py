@@ -2,7 +2,7 @@ import requests, queue, base64, random, string, threading, ctypes
 from colorama import Fore, Style, init; init(convert=True)
 
 class Claimer():
-    usernames = queue.Queue(); 
+    usernames = queue.Queue()
     headers = {'Ubi-AppId': "2c2d31af-4ee4-4049-85dc-00dc74aef88f","Ubi-RequestedPlatformType": "uplay","user-agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3"}
     checked_count=0; error_count=0
     proxies = {'https://': "http://"+random.choice(open("data/proxies.txt", "r").readlines())}
