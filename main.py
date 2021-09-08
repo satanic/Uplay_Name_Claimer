@@ -49,7 +49,7 @@ class Claimer():
                 r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
                 if r.status_code == 200:
                     if len(r.json()['profiles']) == 0:
-                        print(Fore.GREEN + Style.BRIGHT + f'[+] AVAILABLE {i}\n')
+                        print(Fore.GREEN + Style.BRIGHT + f'[+] {i}\n')
                         self.create_account(i)
                     else:
                         print(Fore.RED + Style.BRIGHT + f'[-] {i}\n')
