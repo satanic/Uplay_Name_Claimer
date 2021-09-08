@@ -1,10 +1,11 @@
 import requests, queue, base64, random, string, threading, ctypes
+from colorama import Fore, Style, init; init(convert=True)
 
 class Claimer():
     usernames = queue.Queue(); 
     headers = {'Ubi-AppId': "2c2d31af-4ee4-4049-85dc-00dc74aef88f","Ubi-RequestedPlatformType": "uplay","user-agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3"}
     checked_count=0; error_count=0
-    proxies = {'https://': "http://"+random.choice(open("proxies.txt", "r").readlines())}
+    proxies = {'https://': "http://"+random.choice(open("data/proxies.txt", "r").readlines())}
 
     def create_account(self, user):
         email=f"{user}-{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))}"
@@ -25,12 +26,12 @@ class Claimer():
         with requests.Session() as session:
             r = session.post("https://public-ubiservices.ubi.com/v3/users", headers=self.headers, json=body)
             if r.status_code == 200:
-                with open('claimed.txt', "a") as f:
+                with open('data/claimed.txt', "a") as f:
                     f.write(f'{user} | {email}:{password}\n')
                     
             
     def login(self):
-        self.headers["Authorization"] = "Basic " + base64.b64encode(bytes(open("login.txt", "r").readline(), "utf-8")).decode("utf-8")
+        self.headers["Authorization"] = "Basic " + base64.b64encode(bytes(open("data/login.txt", "r").readline(), "utf-8")).decode("utf-8")
         with requests.Session() as session:
             r = session.post("https://public-ubiservices.ubi.com/v3/profiles/sessions", json={"Content-Type":"application/json"}, headers=self.headers)
             if r.status_code == 200:
@@ -48,17 +49,17 @@ class Claimer():
                 r = s.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
                 if r.status_code == 200:
                     if len(r.json()['profiles']) == 0:
-                        print(f'[+] AVAILABLE {i}\n')
+                        print(Fore.GREEN + Style.BRIGHT + f'[+] AVAILABLE {i}\n')
                         self.create_account(i)
                     else:
-                        print(f'[-] UNAVAILABLE {i}\n')
+                        print(Fore.RED + Style.BRIGHT + f'[-] {i}\n')
                 else:
                     self.error_count+=1
-                    print(f'[!] ERROR {i}\n')
+                    print(Fore.BLACK + Style.BRIGHT + f'[!] ERROR {i}\n')
                 
 
     def threads(self):
-        [self.usernames.put(line.strip()) for line in open('names.txt')]
+        [self.usernames.put(line.strip()) for line in open('data/names.txt')]
         for _ in range(250):
             threading.Thread(target=self.main, args=()).start()
 
