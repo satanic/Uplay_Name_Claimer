@@ -55,7 +55,7 @@ class Claimer():
                         print(Fore.RED + Style.BRIGHT + f'[-] {i}\n')
                 else:
                     self.error_count+=1
-                    print(Fore.BLACK + Style.BRIGHT + f'[!] ERROR {i}\n')
+                    print(Fore.BLACK + Style.BRIGHT + f'[!] {i}\n')
                 
 
     def threads(self):
