@@ -28,7 +28,6 @@ class Claimer():
             if r.status_code == 200:
                 with open('data/claimed.txt', "a") as f:
                     f.write(f'{user} | {self.email}:{self.password}\n')
-                    print(Fore.GREEN + Style.BRIGHT + f'[+] {user} | {self.email}:{self.password}\n')
 
 
     def login(self):
