@@ -28,8 +28,8 @@ class Claimer():
             if r.status_code == 200:
                 with open('data/claimed.txt', "a") as f:
                     f.write(f'{user} | {email}:{password}\n')
-                    
-            
+
+
     def login(self):
         self.headers["Authorization"] = "Basic " + base64.b64encode(bytes(open("data/login.txt", "r").readline(), "utf-8")).decode("utf-8")
         with requests.Session() as session:
@@ -38,8 +38,8 @@ class Claimer():
                 if r.json()["ticket"]:
                     token = "Ubi_v1 t=" + r.json()["ticket"]
                     self.headers['Authorization'] = token
-                    return token
-    
+                    return True, token
+
 
     def main(self):
         while not self.usernames.empty():
@@ -59,9 +59,10 @@ class Claimer():
                 
 
     def threads(self):
-        [self.usernames.put(line.strip()) for line in open('data/names.txt')]
-        for _ in range(250):
-            threading.Thread(target=self.main, args=()).start()
+        if self.login()[0]:
+            [self.usernames.put(line.strip()) for line in open('data/names.txt')]
+            for _ in range(250):
+                threading.Thread(target=self.main, args=()).start()
 
 
 
