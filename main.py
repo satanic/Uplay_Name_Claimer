@@ -45,8 +45,8 @@ class Claimer():
         while not self.usernames.empty():
             ctypes.windll.kernel32.SetConsoleTitleW(f"Checked: {self.checked_count+1} | Errors {self.error_count}")
             i = self.usernames.get(); self.usernames.put(i)
-            with requests.Session() as s:
-                r = s.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
+            with requests.Session() as session:
+                r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
                 if r.status_code == 200:
                     if len(r.json()['profiles']) == 0:
                         print(Fore.GREEN + Style.BRIGHT + f'[+] AVAILABLE {i}\n')
