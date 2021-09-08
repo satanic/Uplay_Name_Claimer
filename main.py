@@ -44,18 +44,18 @@ class Claimer():
     def main(self):
         while not self.usernames.empty():
             ctypes.windll.kernel32.SetConsoleTitleW(f"Checked: {self.checked_count+1} | Errors: {self.error_count}")
-            i = self.usernames.get(); self.usernames.put(i)
+            name = self.usernames.get(); self.usernames.put(name)
             with requests.Session() as session:
-                r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
+                r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={name}&platformType=uplay',headers=self.headers)
                 if r.status_code == 200:
                     if len(r.json()['profiles']) == 0:
-                        print(Fore.GREEN + Style.BRIGHT + f'[+] {i}\n')
-                        self.create_account(i)
+                        print(Fore.GREEN + Style.BRIGHT + f'[+] {name}\n')
+                        self.create_account(name)
                     else:
-                        print(Fore.RED + Style.BRIGHT + f'[-] {i}\n')
+                        print(Fore.RED + Style.BRIGHT + f'[-] {name}\n')
                 else:
                     self.error_count+=1
-                    print(Fore.BLACK + Style.BRIGHT + f'[!] {i}\n')
+                    print(Fore.BLACK + Style.BRIGHT + f'[!] {name}\n')
                 
 
     def threads(self):
