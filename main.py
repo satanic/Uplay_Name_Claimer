@@ -8,18 +8,18 @@ class Claimer():
     proxies = {'https://': "http://"+random.choice(open("data/proxies.txt", "r").readlines())}
 
     def create_account(self, user):
-        email=f"{user}-{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))}"
-        password=f"{''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_letters) for _ in range(15))}"
+        self.email=f"{user}-{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))}"
+        self.password=f"{''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_letters) for _ in range(15))}"
         body = {
             'age': None,
             "dateOfBirth": "1989-01-18T00:00:00.00000Z",
-            'confirmedEmail': email,
-            'email': email,
+            'confirmedEmail': self.email,
+            'email': self.email,
             'country': 'GB',
             'firstName': None,
             'lastName': None,
             'nameOnPlatform': user,
-            'password': password,
+            'password': self.password,
             'preferredLanguage': 'en',
             'legalOptinsKey': 'eyJ2dG91IjoiNC4wIiwidnBwIjoiNC4wIiwidnRvcyI6IjIuMSIsImx0b3UiOiJlbi1HQiIsImxwcCI6ImVuLUdCIiwibHRvcyI6ImVuLUdCIn0'
         }
@@ -27,7 +27,8 @@ class Claimer():
             r = session.post("https://public-ubiservices.ubi.com/v3/users", headers=self.headers, json=body)
             if r.status_code == 200:
                 with open('data/claimed.txt', "a") as f:
-                    f.write(f'{user} | {email}:{password}\n')
+                    f.write(f'{user} | {self.email}:{self.password}\n')
+                    print(Fore.GREEN + Style.BRIGHT + f'[+] {user} | {self.email}:{self.password}\n')
 
 
     def login(self):
