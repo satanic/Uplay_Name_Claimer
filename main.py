@@ -43,7 +43,7 @@ class Claimer():
 
     def main(self):
         while not self.usernames.empty():
-            ctypes.windll.kernel32.SetConsoleTitleW(f"Checked: {self.checked_count+1} | Errors {self.error_count}")
+            ctypes.windll.kernel32.SetConsoleTitleW(f"Checked: {self.checked_count+1} | Errors: {self.error_count}")
             i = self.usernames.get(); self.usernames.put(i)
             with requests.Session() as session:
                 r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={i}&platformType=uplay',headers=self.headers)
