@@ -4,12 +4,12 @@ from colorama import Fore, Style, init; init(convert=True)
 class Claimer():
     usernames = queue.Queue()
     headers = {'Ubi-AppId': "2c2d31af-4ee4-4049-85dc-00dc74aef88f","Ubi-RequestedPlatformType": "uplay","user-agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3"}
-    checked_count=0; error_count=0
+    checked_count = 0; error_count = 0
     proxies = {'https://': "http://"+random.choice(open("data/proxies.txt", "r").readlines())}
 
     def create_account(self, user):
-        email=f"{user}-{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))}"
-        password=f"{''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_letters) for _ in range(15))}"
+        email = f"{user}-" + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))
+        password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_letters) for _ in range(15))
         body = {
             'age': None,
             "dateOfBirth": "1989-01-18T00:00:00.00000Z",
