@@ -38,7 +38,9 @@ class Claimer():
                 if r.json()["ticket"]:
                     token = "Ubi_v1 t=" + r.json()["ticket"]
                     self.headers['Authorization'] = token
-                    return True, token
+                    return True
+                return False
+            return False
 
 
     def main(self):
@@ -59,7 +61,7 @@ class Claimer():
                 
 
     def threads(self):
-        if self.login()[0]:
+        if self.login():
             [self.usernames.put(line.strip()) for line in open('data/names.txt')]
             for _ in range(250):
                 threading.Thread(target=self.main, args=()).start()
