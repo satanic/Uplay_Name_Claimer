@@ -5,6 +5,7 @@ class Claimer():
     usernames = queue.Queue()
     headers = {'Ubi-AppId': "2c2d31af-4ee4-4049-85dc-00dc74aef88f","Ubi-RequestedPlatformType": "uplay","user-agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3"}
     checked_count = 0; error_count = 0
+    session=requests.Session()
 
     def create_account(self, user):
         email = f"{user}-" + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))
@@ -23,24 +24,22 @@ class Claimer():
             'preferredLanguage': 'en',
             'legalOptinsKey': 'eyJ2dG91IjoiNC4wIiwidnBwIjoiNC4wIiwidnRvcyI6IjIuMSIsImx0b3UiOiJlbi1HQiIsImxwcCI6ImVuLUdCIiwibHRvcyI6ImVuLUdCIn0'
         }
-        with requests.Session() as session:
-            r = session.post("https://public-ubiservices.ubi.com/v3/users", proxies=proxies, headers=self.headers, json=body)
-            if r.status_code == 200:
-                with open('data/claimed.txt', "a") as f:
-                    f.write(f'{user} | {email}:{password}\n')
+        r = self.session.post("https://public-ubiservices.ubi.com/v3/users", proxies=proxies, headers=self.headers, json=body)
+        if r.status_code == 200:
+            with open('data/claimed.txt', "a") as f:
+                f.write(f'{user} | {email}:{password}\n')
 
 
     def login(self):
         self.headers["Authorization"] = "Basic " + base64.b64encode(bytes(open("data/login.txt", "r").readline(), "utf-8")).decode("utf-8")
-        with requests.Session() as session:
-            r = session.post("https://public-ubiservices.ubi.com/v3/profiles/sessions", json={"Content-Type":"application/json"}, headers=self.headers)
-            if r.status_code == 200:
-                if r.json()["ticket"]:
-                    token = "Ubi_v1 t=" + r.json()["ticket"]
-                    self.headers['Authorization'] = token
-                    return True
-                return False
+        r = self.session.post("https://public-ubiservices.ubi.com/v3/profiles/sessions", json={"Content-Type":"application/json"}, headers=self.headers)
+        if r.status_code == 200:
+            if r.json()["ticket"]:
+                token = "Ubi_v1 t=" + r.json()["ticket"]
+                self.headers['Authorization'] = token
+                return True
             return False
+        return False
 
 
     def main(self):
@@ -48,17 +47,17 @@ class Claimer():
             name = self.usernames.get(); self.usernames.put(name)
             ctypes.windll.kernel32.SetConsoleTitleW(f"Checked: {self.checked_count+1} | Errors: {self.error_count}")
             proxies = {"https":f'http://{random.choice(open("proxies.txt", "r").readlines())}',"http":f'http://{random.choice(open("proxies.txt", "r").readlines())}'}
-            with requests.Session() as session:
-                r = session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={name}&platformType=uplay',headers=self.headers, proxies=proxies)
-                if r.status_code == 200:
-                    if len(r.json()['profiles']) == 0:
-                        print(Fore.GREEN + Style.BRIGHT + f'[+] {name}\n')
-                        self.create_account(name)
-                    else:
-                        print(Fore.RED + Style.BRIGHT + f'[-] {name}\n')
+            
+            r = self.session.get(f'https://public-ubiservices.ubi.com/v2/profiles?nameOnPlatform={name}&platformType=uplay',headers=self.headers, proxies=proxies)
+            if r.status_code == 200:
+                if len(r.json()['profiles']) == 0:
+                    print(Fore.GREEN + Style.BRIGHT + f'[+] {name}\n')
+                    self.create_account(name)
                 else:
-                    self.error_count+=1
-                    print(Fore.BLACK + Style.BRIGHT + f'[!] {name}\n')
+                    print(Fore.RED + Style.BRIGHT + f'[-] {name}\n')
+            else:
+                self.error_count+=1
+                print(Fore.BLACK + Style.BRIGHT + f'[!] {name}\n')
                 
 
     def threads(self):
